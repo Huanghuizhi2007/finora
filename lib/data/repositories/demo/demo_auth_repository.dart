@@ -1,24 +1,24 @@
-import '../../../core/constants/app_constants.dart';
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../domain/entities/app_user.dart';
 import '../contracts/auth_repository.dart';
 
 class DemoAuthRepository implements AuthRepository {
   DemoAuthRepository();
 
+  static const String _profileKey = 'finora_demo_profile_v1';
+
   AppUser? _currentUser;
 
-  AppUser get _demoUser => AppUser(
-        id: 'demo-user',
-        nickname: AppConstants.demoUserName,
-        email: AppConstants.demoUserEmail,
-        defaultCurrency: 'CNY',
-        language: 'zh_CN',
-        isAdmin: true,
-        createdAt: DateTime(2026, 3, 1),
-      );
-
   @override
-  Future<AppUser?> restoreSession() async => _currentUser;
+  Future<AppUser?> restoreSession() async {
+    if (_currentUser != null) return _currentUser;
+    final saved = await _readProfile();
+    if (saved != null) _currentUser = saved;
+    return _currentUser;
+  }
 
   @override
   Future<AppUser?> signInWithEmail({
@@ -28,7 +28,15 @@ class DemoAuthRepository implements AuthRepository {
     if (email.trim().isEmpty || password.isEmpty) {
       throw Exception('请输入邮箱和密码');
     }
-    _currentUser = _demoUser;
+    final saved = await _readProfile();
+    if (saved != null && saved.email == email.trim()) {
+      _currentUser = saved;
+      return _currentUser;
+    }
+    _currentUser = _createUser(
+      nickname: email.trim().split('@').first,
+      email: email.trim(),
+    );
     return _currentUser;
   }
 
@@ -41,19 +49,33 @@ class DemoAuthRepository implements AuthRepository {
     if (nickname.trim().isEmpty || email.trim().isEmpty || password.length < 6) {
       throw Exception('请填写昵称、邮箱，并设置至少 6 位密码');
     }
-    _currentUser = _demoUser;
+    _currentUser = _createUser(
+      nickname: nickname.trim(),
+      email: email.trim(),
+    );
+    await _saveProfile(_currentUser!);
     return _currentUser;
   }
 
   @override
   Future<AppUser?> signInWithGoogle() async {
-    _currentUser = _demoUser;
+    _currentUser = await _readProfile() ??
+        _createUser(
+          nickname: 'Google 用户',
+          email: null,
+        );
+    await _saveProfile(_currentUser!);
     return _currentUser;
   }
 
   @override
   Future<AppUser?> signInWithApple() async {
-    _currentUser = _demoUser;
+    _currentUser = await _readProfile() ??
+        _createUser(
+          nickname: 'Apple 用户',
+          email: null,
+        );
+    await _saveProfile(_currentUser!);
     return _currentUser;
   }
 
@@ -77,11 +99,16 @@ class DemoAuthRepository implements AuthRepository {
     String? nickname,
     String? avatarUrl,
   }) async {
-    final updated = _demoUser.copyWith(
+    final current = _currentUser ?? await _readProfile();
+    if (current == null) {
+      throw Exception('请先登录');
+    }
+    final updated = current.copyWith(
       nickname: nickname,
       avatarUrl: avatarUrl,
     );
     _currentUser = updated;
+    await _saveProfile(updated);
     return updated;
   }
 
@@ -93,5 +120,48 @@ class DemoAuthRepository implements AuthRepository {
   @override
   Future<void> deleteAccount(String userId) async {
     _currentUser = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_profileKey);
+    } catch (_) {
+      // 本地存储不可用时保持内存状态。
+    }
+  }
+
+  AppUser _createUser({
+    required String nickname,
+    required String? email,
+  }) {
+    return AppUser(
+      id: 'demo-user',
+      nickname: nickname,
+      email: email,
+      defaultCurrency: 'CNY',
+      language: 'zh_CN',
+      isAdmin: true,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  Future<AppUser?> _readProfile() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_profileKey);
+      if (raw == null) return null;
+      return AppUser.fromMap(
+        jsonDecode(raw) as Map<String, dynamic>,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _saveProfile(AppUser user) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_profileKey, jsonEncode(user.toMap()));
+    } catch (_) {
+      // 本地存储不可用时仅保留内存会话。
+    }
   }
 }

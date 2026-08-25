@@ -2,9 +2,11 @@ import 'package:finora/app.dart';
 import 'package:finora/data/repositories/demo/demo_auth_repository.dart';
 import 'package:finora/data/repositories/demo/demo_finance_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   testWidgets('renders login page in demo mode', (tester) async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
     await tester.pumpWidget(
       FinoraApp(
         authRepository: DemoAuthRepository(),
