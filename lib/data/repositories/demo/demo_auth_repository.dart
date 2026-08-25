@@ -132,8 +132,16 @@ class DemoAuthRepository implements AuthRepository {
     required String nickname,
     required String? email,
   }) {
+    final normalizedEmail = email?.trim().toLowerCase() ?? '';
+    final id = normalizedEmail.isNotEmpty
+        ? 'demo-$normalizedEmail'
+        : nickname == 'Google 用户'
+            ? 'demo-google'
+            : nickname == 'Apple 用户'
+                ? 'demo-apple'
+                : 'demo-${DateTime.now().millisecondsSinceEpoch}';
     return AppUser(
-      id: 'demo-user',
+      id: id,
       nickname: nickname,
       email: email,
       defaultCurrency: 'CNY',

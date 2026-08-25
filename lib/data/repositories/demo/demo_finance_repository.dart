@@ -1,9 +1,4 @@
-import 'dart:math';
-
-import 'package:uuid/uuid.dart';
-
 import '../../../core/constants/app_constants.dart';
-import '../../../core/utils/date_utils.dart';
 import '../../../domain/entities/budget.dart';
 import '../../../domain/entities/category.dart';
 import '../../../domain/entities/enums.dart';
@@ -12,82 +7,79 @@ import '../../../domain/entities/transaction_record.dart';
 import '../contracts/finance_repository.dart';
 
 class DemoFinanceRepository implements FinanceRepository {
-  DemoFinanceRepository() {
-    _seed();
+  DemoFinanceRepository();
+
+  final Map<String, _UserFinanceData> _dataByUser = <String, _UserFinanceData>{};
+
+  _UserFinanceData _dataFor(String userId) {
+    return _dataByUser.putIfAbsent(
+      userId,
+      () => _UserFinanceData(
+        accounts: _seedAccounts(userId),
+        categories: _seedCategories(userId),
+      ),
+    );
   }
 
-  static const String _userId = 'demo-user';
-  final List<FinanceAccount> _accounts = <FinanceAccount>[];
-  final List<Category> _categories = <Category>[];
-  final List<TransactionRecord> _transactions = <TransactionRecord>[];
-  final List<Budget> _budgets = <Budget>[];
-
-  void _seed() {
+  List<FinanceAccount> _seedAccounts(String userId) {
     final now = DateTime.now();
-
-    _accounts.addAll(<FinanceAccount>[
+    return <FinanceAccount>[
       FinanceAccount(
         id: 'acc-wechat',
-        userId: _userId,
+        userId: userId,
         name: '微信支付',
         type: AccountType.wechat,
-        balance: 3200,
+        balance: 0,
         iconKey: 'wechat',
         colorValue: 0xFF2563EB,
         sortOrder: 0,
-        createdAt: now.subtract(const Duration(days: 180)),
+        createdAt: now,
       ),
       FinanceAccount(
         id: 'acc-alipay',
-        userId: _userId,
+        userId: userId,
         name: '支付宝',
         type: AccountType.alipay,
-        balance: 2450,
+        balance: 0,
         iconKey: 'alipay',
         colorValue: 0xFF7C3AED,
         sortOrder: 1,
-        createdAt: now.subtract(const Duration(days: 180)),
+        createdAt: now,
       ),
       FinanceAccount(
         id: 'acc-cash',
-        userId: _userId,
+        userId: userId,
         name: '现金',
         type: AccountType.cash,
-        balance: 980,
+        balance: 0,
         iconKey: 'cash',
         colorValue: 0xFF059669,
         sortOrder: 2,
-        createdAt: now.subtract(const Duration(days: 180)),
+        createdAt: now,
       ),
       FinanceAccount(
         id: 'acc-bank',
-        userId: _userId,
-        name: '招商银行卡',
+        userId: userId,
+        name: '银行卡',
         type: AccountType.bankCard,
-        balance: 8350,
+        balance: 0,
         iconKey: 'bank',
         colorValue: 0xFF0891B2,
         sortOrder: 3,
-        createdAt: now.subtract(const Duration(days: 180)),
+        createdAt: now,
       ),
-      FinanceAccount(
-        id: 'acc-credit',
-        userId: _userId,
-        name: '信用卡',
-        type: AccountType.creditCard,
-        balance: -2400,
-        iconKey: 'credit',
-        colorValue: 0xFFDC2626,
-        sortOrder: 4,
-        createdAt: now.subtract(const Duration(days: 120)),
-      ),
-    ]);
+    ];
+  }
 
+  List<Category> _seedCategories(String userId) {
+    final now = DateTime.now();
+    final categories = <Category>[];
     var order = 0;
     for (final style in defaultExpenseCategories) {
-      _categories.add(
+      categories.add(
         Category(
           id: 'cat-exp-${style.label}',
+          userId: userId,
           type: TransactionType.expense,
           name: style.label,
           iconKey: style.iconKey,
@@ -99,9 +91,10 @@ class DemoFinanceRepository implements FinanceRepository {
       );
     }
     for (final style in defaultIncomeCategories) {
-      _categories.add(
+      categories.add(
         Category(
           id: 'cat-inc-${style.label}',
+          userId: userId,
           type: TransactionType.income,
           name: style.label,
           iconKey: style.iconKey,
@@ -112,183 +105,17 @@ class DemoFinanceRepository implements FinanceRepository {
         ),
       );
     }
-
-    _seedTransactions(now);
-    _seedBudgets(now);
-  }
-
-  void _seedTransactions(DateTime now) {
-    final random = Random(42);
-    final expenseIds = _categories
-        .where((c) => c.type == TransactionType.expense)
-        .map((c) => c.id)
-        .toList();
-    final incomeIds = _categories
-        .where((c) => c.type == TransactionType.income)
-        .map((c) => c.id)
-        .toList();
-    final accountIds = <String>['acc-wechat', 'acc-alipay', 'acc-cash', 'acc-bank', 'acc-credit'];
-
-    for (var offset = 5; offset >= 0; offset--) {
-      final month = DateTime(now.year, now.month - offset, 1);
-      final monthExpenseTotal = 2600 + random.nextInt(1400);
-      var spent = 0;
-
-      _transactions.add(
-        TransactionRecord(
-          id: const Uuid().v4(),
-          userId: _userId,
-          type: TransactionType.income,
-          amount: 8000,
-          categoryId: 'cat-inc-工资',
-          accountId: 'acc-bank',
-          happenedAt: DateTime(month.year, month.month, 1, 9, 30),
-          note: '8 月工资',
-          createdAt: DateTime(month.year, month.month, 1, 9, 30),
-        ),
-      );
-
-      if (offset == 0) {
-        _transactions.add(
-          TransactionRecord(
-            id: const Uuid().v4(),
-            userId: _userId,
-            type: TransactionType.income,
-            amount: 1200,
-            categoryId: 'cat-inc-兼职',
-            accountId: 'acc-alipay',
-            happenedAt: DateTime(now.year, now.month, 15, 12, 0),
-            note: '设计兼职',
-            createdAt: DateTime(now.year, now.month, 15, 12, 0),
-          ),
-        );
-      }
-
-      final maxDay = now.month == month.month ? now.day : 28;
-      var attempts = 0;
-      while (spent < monthExpenseTotal && attempts < 400) {
-        attempts++;
-        final day = 1 + random.nextInt(maxDay);
-        var hour = 8 + random.nextInt(12);
-        var minute = random.nextInt(60);
-        if (offset == 0 && day == now.day) {
-          hour = min(hour, now.hour);
-          if (hour == now.hour) minute = min(minute, now.minute);
-        }
-        final happenedAt = DateTime(month.year, month.month, day, hour, minute);
-        if (happenedAt.isAfter(now)) continue;
-
-        final categoryId = expenseIds[random.nextInt(expenseIds.length)];
-        final amount = (8 + random.nextInt(360)).toDouble();
-        _transactions.add(
-          TransactionRecord(
-            id: const Uuid().v4(),
-            userId: _userId,
-            type: TransactionType.expense,
-            amount: amount,
-            categoryId: categoryId,
-            accountId: accountIds[random.nextInt(accountIds.length)],
-            happenedAt: happenedAt,
-            note: _noteForCategory(categoryId),
-            createdAt: happenedAt,
-          ),
-        );
-        spent += amount.toInt();
-      }
-
-      if (offset > 0) {
-        _transactions.add(
-          TransactionRecord(
-            id: const Uuid().v4(),
-            userId: _userId,
-            type: TransactionType.income,
-            amount: (600 + random.nextInt(800)).toDouble(),
-            categoryId: incomeIds[random.nextInt(incomeIds.length)],
-            accountId: 'acc-bank',
-            happenedAt: DateTime(month.year, month.month, 20, 10, 0),
-            note: '投资收益',
-            createdAt: DateTime(month.year, month.month, 20, 10, 0),
-          ),
-        );
-      }
-    }
-
-    _transactions.sort((a, b) => b.happenedAt.compareTo(a.happenedAt));
-  }
-
-  String _noteForCategory(String categoryId) {
-    const notes = <String, String>{
-      'cat-exp-餐饮': '午餐',
-      'cat-exp-交通': '地铁通勤',
-      'cat-exp-购物': '生活用品',
-      'cat-exp-娱乐': '电影',
-      'cat-exp-住房': '房租',
-      'cat-exp-水电': '电费',
-      'cat-exp-学习': '课程',
-      'cat-exp-医疗': '药品',
-      'cat-exp-旅行': '车票',
-    };
-    return notes[categoryId] ?? '日常消费';
-  }
-
-  void _seedBudgets(DateTime now) {
-    final period = AppDateUtils.monthKey(now);
-    _budgets.addAll(<Budget>[
-      Budget(
-        id: 'bud-total',
-        userId: _userId,
-        scope: 'total',
-        amount: 5000,
-        period: period,
-        createdAt: now,
-      ),
-      Budget(
-        id: 'bud-food',
-        userId: _userId,
-        scope: 'category',
-        amount: 1000,
-        period: period,
-        categoryId: 'cat-exp-餐饮',
-        createdAt: now,
-      ),
-      Budget(
-        id: 'bud-transit',
-        userId: _userId,
-        scope: 'category',
-        amount: 500,
-        period: period,
-        categoryId: 'cat-exp-交通',
-        createdAt: now,
-      ),
-      Budget(
-        id: 'bud-cart',
-        userId: _userId,
-        scope: 'category',
-        amount: 800,
-        period: period,
-        categoryId: 'cat-exp-购物',
-        createdAt: now,
-      ),
-      Budget(
-        id: 'bud-fun',
-        userId: _userId,
-        scope: 'category',
-        amount: 600,
-        period: period,
-        categoryId: 'cat-exp-娱乐',
-        createdAt: now,
-      ),
-    ]);
+    return categories;
   }
 
   @override
   Future<List<FinanceAccount>> fetchAccounts(String userId) async {
-    return List<FinanceAccount>.of(_accounts.where((a) => !a.isArchived));
+    return List<FinanceAccount>.of(_dataFor(userId).accounts);
   }
 
   @override
   Future<List<Category>> fetchCategories(String userId) async {
-    return List<Category>.of(_categories);
+    return List<Category>.of(_dataFor(userId).categories);
   }
 
   @override
@@ -301,88 +128,100 @@ class DemoFinanceRepository implements FinanceRepository {
     String? categoryId,
     String? accountId,
   }) async {
-    Iterable<TransactionRecord> result = _transactions.where(
-      (t) => t.userId == userId,
-    );
+    Iterable<TransactionRecord> result = _dataFor(userId).transactions;
     if (from != null) result = result.where((t) => !t.happenedAt.isBefore(from));
     if (to != null) result = result.where((t) => !t.happenedAt.isAfter(to));
     if (query != null && query.trim().isNotEmpty) {
       final keyword = query.trim().toLowerCase();
-      result = result.where(
-        (t) => t.note.toLowerCase().contains(keyword),
-      );
+      result = result.where((t) => t.note.toLowerCase().contains(keyword));
     }
     if (type != null) result = result.where((t) => t.type == type);
     if (categoryId != null) result = result.where((t) => t.categoryId == categoryId);
     if (accountId != null) result = result.where((t) => t.accountId == accountId);
-    final list = result.toList()..sort((a, b) => b.happenedAt.compareTo(a.happenedAt));
+    final list = result.toList()
+      ..sort((a, b) => b.happenedAt.compareTo(a.happenedAt));
     return list;
   }
 
   @override
   Future<List<Budget>> fetchBudgets(String userId) async {
-    return List<Budget>.of(_budgets);
+    return List<Budget>.of(_dataFor(userId).budgets);
   }
 
   @override
   Future<void> saveAccount(FinanceAccount account) async {
-    final existingIndex = _accounts.indexWhere((a) => a.id == account.id);
+    final data = _dataFor(account.userId);
+    final existingIndex = data.accounts.indexWhere((a) => a.id == account.id);
     if (existingIndex >= 0) {
-      _accounts[existingIndex] = account;
+      data.accounts[existingIndex] = account;
     } else {
-      _accounts.add(account);
+      data.accounts.add(account);
     }
   }
 
   @override
   Future<void> deleteAccount(String accountId) async {
-    _accounts.removeWhere((a) => a.id == accountId);
+    for (final data in _dataByUser.values) {
+      data.accounts.removeWhere((a) => a.id == accountId);
+    }
   }
 
   @override
   Future<void> saveCategory(Category category) async {
-    final existingIndex = _categories.indexWhere((c) => c.id == category.id);
+    final ownerId = category.userId ?? _ownerForCategory(category.id);
+    if (ownerId == null) return;
+    final data = _dataFor(ownerId);
+    final existingIndex = data.categories.indexWhere((c) => c.id == category.id);
     if (existingIndex >= 0) {
-      _categories[existingIndex] = category;
+      data.categories[existingIndex] = category;
     } else {
-      _categories.add(category);
+      data.categories.add(category);
     }
   }
 
   @override
   Future<void> deleteCategory(String categoryId) async {
-    _categories.removeWhere((c) => c.id == categoryId);
+    for (final data in _dataByUser.values) {
+      data.categories.removeWhere((c) => c.id == categoryId);
+    }
   }
 
   @override
   Future<void> saveTransaction(TransactionRecord transaction) async {
-    final existingIndex = _transactions.indexWhere((t) => t.id == transaction.id);
+    final data = _dataFor(transaction.userId);
+    final existingIndex =
+        data.transactions.indexWhere((t) => t.id == transaction.id);
     if (existingIndex >= 0) {
-      _transactions[existingIndex] = transaction;
+      data.transactions[existingIndex] = transaction;
     } else {
-      _transactions.add(transaction);
+      data.transactions.add(transaction);
     }
-    _transactions.sort((a, b) => b.happenedAt.compareTo(a.happenedAt));
+    data.transactions.sort((a, b) => b.happenedAt.compareTo(a.happenedAt));
   }
 
   @override
   Future<void> deleteTransaction(String transactionId) async {
-    _transactions.removeWhere((t) => t.id == transactionId);
+    for (final data in _dataByUser.values) {
+      data.transactions.removeWhere((t) => t.id == transactionId);
+    }
   }
 
   @override
   Future<void> saveBudget(Budget budget) async {
-    final existingIndex = _budgets.indexWhere((b) => b.id == budget.id);
+    final data = _dataFor(budget.userId);
+    final existingIndex = data.budgets.indexWhere((b) => b.id == budget.id);
     if (existingIndex >= 0) {
-      _budgets[existingIndex] = budget;
+      data.budgets[existingIndex] = budget;
     } else {
-      _budgets.add(budget);
+      data.budgets.add(budget);
     }
   }
 
   @override
   Future<void> deleteBudget(String budgetId) async {
-    _budgets.removeWhere((b) => b.id == budgetId);
+    for (final data in _dataByUser.values) {
+      data.budgets.removeWhere((b) => b.id == budgetId);
+    }
   }
 
   @override
@@ -390,19 +229,41 @@ class DemoFinanceRepository implements FinanceRepository {
     String userId,
     List<TransactionRecord> records,
   ) async {
+    final data = _dataFor(userId);
     var imported = 0;
     for (final record in records) {
-      final exists = _transactions.any(
+      final exists = data.transactions.any(
         (t) =>
             t.externalId != null &&
             t.externalId == record.externalId &&
             t.amount == record.amount,
       );
       if (exists) continue;
-      _transactions.add(record);
+      data.transactions.add(record);
       imported++;
     }
-    _transactions.sort((a, b) => b.happenedAt.compareTo(a.happenedAt));
+    data.transactions.sort((a, b) => b.happenedAt.compareTo(a.happenedAt));
     return imported;
   }
+
+  String? _ownerForCategory(String categoryId) {
+    for (final entry in _dataByUser.entries) {
+      if (entry.value.categories.any((c) => c.id == categoryId)) {
+        return entry.key;
+      }
+    }
+    return null;
+  }
+}
+
+class _UserFinanceData {
+  _UserFinanceData({
+    required this.accounts,
+    required this.categories,
+  });
+
+  final List<FinanceAccount> accounts;
+  final List<Category> categories;
+  final List<TransactionRecord> transactions = <TransactionRecord>[];
+  final List<Budget> budgets = <Budget>[];
 }
