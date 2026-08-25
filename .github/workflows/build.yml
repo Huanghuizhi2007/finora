@@ -1,0 +1,58 @@
+name: Build Finora APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate missing platform files
+        run: flutter create --platforms=android,ios --org com.finora --project-name finora .
+
+      - name: Ensure Android network permission
+        run: |
+          if ! grep -q "android.permission.INTERNET" android/app/src/main/AndroidManifest.xml; then
+            sed -i 's|<application|    <uses-permission android:name="android.permission.INTERNET"/>\n    <application|' android/app/src/main/AndroidManifest.xml
+          fi
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Test
+        run: flutter test
+
+      - name: Build release APK
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          ANDROID_VERSION_CODE: ${{ github.run_number }}
+        run: |
+          if [ -n "$SUPABASE_URL" ]; then
+            flutter build apk --release \
+              --dart-define=SUPABASE_URL="$SUPABASE_URL" \
+              --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+              --dart-define=USE_DEMO_DATA=false
+          else
+            flutter build apk --release
+          fi
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: finora-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
