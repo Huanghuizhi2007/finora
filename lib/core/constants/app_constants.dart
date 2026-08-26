@@ -66,6 +66,7 @@ const List<AppCategoryStyle> defaultExpenseCategories =
 const List<AppCategoryStyle> defaultIncomeCategories =
     <AppCategoryStyle>[
   AppCategoryStyle(label: '工资', iconKey: 'salary', color: Color(0xFF34D399)),
+  AppCategoryStyle(label: '生活费', iconKey: 'wallet', color: Color(0xFF2563EB)),
   AppCategoryStyle(label: '奖金', iconKey: 'gift', color: Color(0xFFF59E0B)),
   AppCategoryStyle(label: '投资', iconKey: 'trending', color: Color(0xFF38BDF8)),
   AppCategoryStyle(label: '红包', iconKey: 'redpacket', color: Color(0xFFFB7185)),

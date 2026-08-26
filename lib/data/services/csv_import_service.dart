@@ -174,16 +174,17 @@ class CsvImportService {
       throw Exception('缺少默认分类，请先初始化分类数据');
     }
     const keywordMap = <String, String>{
-      '餐饮': '餐|饭|早|午|晚|外卖|咖啡|奶茶|火锅|烧烤',
-      '购物': '购|超市|淘宝|京东|商城|拼多多|商场|百货',
+      '餐饮': '餐|饭|早|午|晚|外卖|咖啡|奶茶|火锅|烧烤|售货柜|一卡通|食堂|餐厅',
+      '购物': '购|超市|淘宝|京东|商城|拼多多|商场|百货|小夜灯|收纳|衣架|洗衣|袜子|灯|袋|架|套|鞋|裤|杯|盒|器|笔|配件|置物',
       '交通': '地铁|公交|打车|滴滴|加油|高铁|火车|机票|停车|单车',
       '娱乐': '电影|KTV|游戏|演出|乐园|会员|视频',
       '住房': '房租|租金|房贷|物业|装修|家具',
       '水电': '电费|水费|燃气|供暖|话费|流量|宽带',
-      '学习': '课程|培训|图书|书店|学费|考试',
+      '学习': 'deepseek|api|gpt|大模型|人工智能|ai|课程|培训|图书|书店|学费|考试|知识',
       '医疗': '医院|药|诊所|体检|挂号',
       '旅行': '酒店|旅行|景区|门票|民宿',
       '工资': '工资|薪水|薪资|发放',
+      '生活费': '生活费',
       '奖金': '奖金|年终|绩效|分红',
       '投资': '理财|基金|股票|收益|利息|余额宝',
       '红包': '红包|转账|收款',
@@ -191,7 +192,7 @@ class CsvImportService {
     };
 
     for (final entry in keywordMap.entries) {
-      if (RegExp(entry.value).hasMatch(product)) {
+      if (RegExp(entry.value, caseSensitive: false).hasMatch(product)) {
         for (final category in pool) {
           if (category.name == entry.key) return category;
         }

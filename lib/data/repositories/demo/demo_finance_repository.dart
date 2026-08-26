@@ -24,8 +24,27 @@ class DemoFinanceRepository implements FinanceRepository {
           accounts: _seedAccounts(userId),
           categories: _seedCategories(userId),
         );
+    final changed = _applyDefaults(userId, data);
+    if (changed) await _persist(userId);
     _dataByUser[userId] = data;
     return data;
+  }
+
+  bool _applyDefaults(String userId, _UserFinanceData data) {
+    var changed = false;
+    for (final account in _seedAccounts(userId)) {
+      if (!data.accounts.any((a) => a.id == account.id)) {
+        data.accounts.add(account);
+        changed = true;
+      }
+    }
+    for (final category in _seedCategories(userId)) {
+      if (!data.categories.any((c) => c.id == category.id)) {
+        data.categories.add(category);
+        changed = true;
+      }
+    }
+    return changed;
   }
 
   Future<_UserFinanceData?> _loadFromPrefs(String userId) async {

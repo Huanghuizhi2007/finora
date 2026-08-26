@@ -209,12 +209,13 @@ begin
     (p_user_id, 'expense', '医疗', 'medical', 4284473241, true, 7),
     (p_user_id, 'expense', '旅行', 'flight', 4282410223, true, 8),
     (p_user_id, 'expense', '其他', 'more', 4293659320, true, 9),
-    (p_user_id, 'income', '工资', 'salary', 4284473241, true, 10),
-    (p_user_id, 'income', '奖金', 'gift', 4292953611, true, 11),
-    (p_user_id, 'income', '投资', 'trending', 4282408184, true, 12),
-    (p_user_id, 'income', '红包', 'redpacket', 4291602565, true, 13),
-    (p_user_id, 'income', '兼职', 'parttime', 4287236858, true, 14),
-    (p_user_id, 'income', '其他', 'more', 4293659320, true, 15);
+    (p_user_id, 'income', '生活费', 'wallet', 4282563051, true, 10),
+    (p_user_id, 'income', '工资', 'salary', 4284473241, true, 11),
+    (p_user_id, 'income', '奖金', 'gift', 4292953611, true, 12),
+    (p_user_id, 'income', '投资', 'trending', 4282408184, true, 13),
+    (p_user_id, 'income', '红包', 'redpacket', 4291602565, true, 14),
+    (p_user_id, 'income', '兼职', 'parttime', 4287236858, true, 15),
+    (p_user_id, 'income', '其他', 'more', 4293659320, true, 16);
 end;
 $$;
 
