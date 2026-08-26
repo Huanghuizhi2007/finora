@@ -102,8 +102,8 @@ class CsvImportService {
       final type = direction == '收入'
           ? TransactionType.income
           : TransactionType.expense;
-      final category = _matchCategory(type, cell(productIndex), categories);
-      final account = _matchAccount(cell(paymentIndex), accounts);
+      final category = matchCategory(type, cell(productIndex), categories);
+      final account = matchAccount(cell(paymentIndex), accounts);
       final product = cell(productIndex);
       final merchant = cell(merchantIndex);
       final note = product.isNotEmpty
@@ -147,7 +147,7 @@ class CsvImportService {
     return double.tryParse(cleaned);
   }
 
-  static Category _matchCategory(
+  static Category matchCategory(
     TransactionType type,
     String product,
     List<Category> categories,
@@ -185,7 +185,7 @@ class CsvImportService {
     return fallback.isNotEmpty ? fallback.first : pool.first;
   }
 
-  static FinanceAccount _matchAccount(
+  static FinanceAccount matchAccount(
     String payment,
     List<FinanceAccount> accounts,
   ) {

@@ -11,6 +11,7 @@ import '../../domain/entities/enums.dart';
 import '../../state/finance_controller.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/gradient_button.dart';
+import 'paste_import_page.dart';
 
 class ImportPage extends StatefulWidget {
   const ImportPage({super.key});
@@ -127,6 +128,56 @@ class _ImportPageState extends State<ImportPage> {
                     icon: Icons.folder_open_rounded,
                     onPressed: _pickFile,
                   ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          GlassCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.content_paste_rounded,
+                      color: AppColors.cyan,
+                      size: 24,
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      '复制粘贴识别',
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '在微信/支付宝账单详情页复制文本，粘贴后自动识别金额、商户和时间。',
+                  style: TextStyle(
+                    color: AppColors.textMuted,
+                    fontSize: 13,
+                    height: 1.5,
+                    letterSpacing: 0,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GradientButton(
+                  label: '去粘贴识别',
+                  icon: Icons.auto_awesome_rounded,
+                  colors: const <Color>[Color(0xFF0891B2), Color(0xFF7C3AED)],
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const PasteImportPage(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
