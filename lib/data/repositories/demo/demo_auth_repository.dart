@@ -37,6 +37,7 @@ class DemoAuthRepository implements AuthRepository {
       nickname: email.trim().split('@').first,
       email: email.trim(),
     );
+    await _saveProfile(_currentUser!);
     return _currentUser;
   }
 
@@ -115,6 +116,12 @@ class DemoAuthRepository implements AuthRepository {
   @override
   Future<void> signOut() async {
     _currentUser = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_profileKey);
+    } catch (_) {
+      // 本地存储不可用时保持内存状态。
+    }
   }
 
   @override
