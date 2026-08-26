@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../accounts/accounts_page.dart';
@@ -35,6 +36,7 @@ class _MainShellState extends State<MainShell> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          HapticFeedback.selectionClick();
           Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => const TransactionEditPage(),
@@ -49,7 +51,10 @@ class _MainShellState extends State<MainShell> {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
-        onDestinationSelected: (value) => setState(() => _index = value),
+        onDestinationSelected: (value) {
+          HapticFeedback.selectionClick();
+          setState(() => _index = value);
+        },
         height: 68,
         destinations: const <NavigationDestination>[
           NavigationDestination(

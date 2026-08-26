@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_constants.dart';
 
-class GlassCard extends StatelessWidget {
+class GlassCard extends StatefulWidget {
   const GlassCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(20),
-    this.radius = 24,
+    this.radius = 18,
     this.gradient,
     this.glow = false,
     this.onTap,
@@ -21,52 +21,55 @@ class GlassCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
+  State<GlassCard> createState() => _GlassCardState();
+}
+
+class _GlassCardState extends State<GlassCard> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed != value) setState(() => _pressed = value);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final hasGradient = gradient != null;
-    final borderColor = Colors.white.withOpacity(hasGradient ? 0.18 : 0.08);
-    final decoration = BoxDecoration(
-      gradient: hasGradient
-          ? LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: gradient!,
-            )
-          : LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: <Color>[
-                Colors.white.withOpacity(0.07),
-                Colors.white.withOpacity(0.03),
-              ],
-            ),
-      borderRadius: BorderRadius.circular(radius),
-      border: Border.all(color: borderColor),
-      boxShadow: glow
-          ? <BoxShadow>[
-              BoxShadow(
-                color: (gradient?.first ?? AppColors.primaryBlue)
-                    .withOpacity(0.35),
-                blurRadius: 28,
-                offset: const Offset(0, 10),
-              ),
-            ]
-          : null,
+    final scheme = Theme.of(context).colorScheme;
+    final borderColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white.withValues(alpha: 0.08)
+        : AppColors.divider;
+    final shadowColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.black.withValues(alpha: 0.25)
+        : const Color(0x0A000000);
+
+    final card = Container(
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(widget.radius),
+        border: Border.all(color: borderColor),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: shadowColor,
+            blurRadius: 18,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Padding(padding: widget.padding, child: widget.child),
     );
 
-    final content = Padding(padding: padding, child: child);
-    if (onTap == null) {
-      return DecoratedBox(decoration: decoration, child: content);
-    }
-    return Material(
-      color: Colors.transparent,
-      child: Ink(
-        decoration: decoration,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(radius),
-          onTap: onTap,
-          child: content,
-        ),
-      ),
+    return AnimatedScale(
+      scale: widget.onTap == null ? 1 : (_pressed ? 0.985 : 1),
+      duration: const Duration(milliseconds: 120),
+      curve: Curves.easeOut,
+      child: widget.onTap == null
+          ? card
+          : GestureDetector(
+              onTapDown: (_) => _setPressed(true),
+              onTapUp: (_) => _setPressed(false),
+              onTapCancel: () => _setPressed(false),
+              onTap: widget.onTap,
+              child: card,
+            ),
     );
   }
 }

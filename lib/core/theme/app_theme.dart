@@ -5,30 +5,48 @@ import '../constants/app_constants.dart';
 class AppTheme {
   AppTheme._();
 
-  static const Color primary = AppColors.primaryBlue;
-  static const Color secondary = AppColors.primaryPurple;
+  static ThemeData light() => _build(
+        brightness: Brightness.light,
+        background: AppColors.background,
+        surface: AppColors.card,
+        baseText: AppColors.textPrimary,
+        mutedText: AppColors.textMuted,
+        primary: AppColors.primaryBlue,
+      );
 
-  static ThemeData dark() {
+  static ThemeData dark() => _build(
+        brightness: Brightness.dark,
+        background: const Color(0xFF111827),
+        surface: const Color(0xFF1F2937),
+        baseText: const Color(0xFFF9FAFB),
+        mutedText: const Color(0xFF9CA3AF),
+        primary: const Color(0xFF60A5FA),
+      );
+
+  static ThemeData _build({
+    required Brightness brightness,
+    required Color background,
+    required Color surface,
+    required Color baseText,
+    required Color mutedText,
+    required Color primary,
+  }) {
     final scheme = ColorScheme.fromSeed(
       seedColor: primary,
-      brightness: Brightness.dark,
+      brightness: brightness,
       primary: primary,
-      secondary: secondary,
-      surface: AppColors.card,
+      surface: surface,
       error: AppColors.expense,
     );
 
-    final baseText = AppColors.textPrimary;
-    final mutedText = AppColors.textMuted;
-
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: brightness,
       colorScheme: scheme,
-      scaffoldBackgroundColor: AppColors.background,
-      canvasColor: AppColors.background,
+      scaffoldBackgroundColor: background,
+      canvasColor: background,
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: background,
         foregroundColor: baseText,
         elevation: 0,
         centerTitle: false,
@@ -91,19 +109,19 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        fillColor: surface,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.08)),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: AppColors.divider),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.08)),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: AppColors.divider),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.primaryBlue, width: 1.5),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: primary, width: 1.5),
         ),
         hintStyle: TextStyle(color: mutedText),
       ),
@@ -111,8 +129,10 @@ class AppTheme {
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(52),
           backgroundColor: primary,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          foregroundColor: brightness == Brightness.dark
+              ? const Color(0xFF111827)
+              : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -123,9 +143,9 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           minimumSize: const Size.fromHeight(52),
-          side: BorderSide(color: Colors.white.withOpacity(0.14)),
+          side: const BorderSide(color: AppColors.divider),
           foregroundColor: baseText,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -135,7 +155,7 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primaryBlue,
+          foregroundColor: primary,
           textStyle: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
@@ -144,13 +164,13 @@ class AppTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: AppColors.card,
-        indicatorColor: AppColors.primaryPurple.withOpacity(0.22),
+        backgroundColor: surface,
+        indicatorColor: primary.withValues(alpha: 0.12),
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color: states.contains(WidgetState.selected)
-                ? AppColors.textPrimary
-                : AppColors.textMuted,
+                ? primary
+                : mutedText,
           ),
         ),
         labelTextStyle: WidgetStateProperty.resolveWith(
@@ -158,8 +178,8 @@ class AppTheme {
             fontSize: 11,
             fontWeight: FontWeight.w600,
             color: states.contains(WidgetState.selected)
-                ? AppColors.textPrimary
-                : AppColors.textMuted,
+                ? primary
+                : mutedText,
             letterSpacing: 0,
           ),
         ),
@@ -170,44 +190,46 @@ class AppTheme {
         space: 1,
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.surfaceAlt,
+        backgroundColor: brightness == Brightness.dark
+            ? const Color(0xFF374151)
+            : const Color(0xFF111827),
         contentTextStyle: const TextStyle(color: Colors.white),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: AppColors.card,
-        modalBackgroundColor: AppColors.card,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: surface,
+        modalBackgroundColor: surface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
       ),
       datePickerTheme: DatePickerThemeData(
-        backgroundColor: AppColors.card,
-        headerBackgroundColor: AppColors.surfaceAlt,
+        backgroundColor: surface,
+        headerBackgroundColor: surface,
         surfaceTintColor: Colors.transparent,
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.card,
+        backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
               ? Colors.white
-              : AppColors.textMuted,
+              : mutedText,
         ),
         trackColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
-              ? AppColors.primaryPurple
+              ? primary
               : AppColors.surfaceAlt,
         ),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: <TargetPlatform, PageTransitionsBuilder>{
-          TargetPlatform.android: ZoomPageTransitionsBuilder(),
-          TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
         },
       ),
     );

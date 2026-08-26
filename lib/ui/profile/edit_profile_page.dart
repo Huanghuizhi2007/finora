@@ -96,12 +96,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     width: 96,
                     height: 96,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: AppColors.bluePurpleGradient,
-                      ),
+                      color: Theme.of(context).colorScheme.primary,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Theme.of(context).colorScheme.outlineVariant,
                         width: 2,
                       ),
                     ),
@@ -110,8 +108,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         _nicknameController.text.isEmpty
                             ? 'F'
                             : _nicknameController.text.substring(0, 1),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 34,
                           fontWeight: FontWeight.w800,
                         ),

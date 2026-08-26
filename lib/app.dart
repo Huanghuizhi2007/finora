@@ -38,7 +38,7 @@ class FinoraApp extends StatelessWidget {
           return MaterialApp(
             title: 'Finora',
             debugShowCheckedModeBanner: false,
-            theme: AppTheme.dark(),
+            theme: AppTheme.light(),
             darkTheme: AppTheme.dark(),
             themeMode: themeController.mode,
             home: const AuthGate(),

@@ -161,21 +161,22 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          gradient: selected
-              ? const LinearGradient(colors: AppColors.bluePurpleGradient)
-              : null,
-          color: selected ? null : AppColors.surfaceAlt,
+          color: selected
+              ? Theme.of(context).colorScheme.primary
+              : AppColors.surfaceAlt,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: selected
                 ? Colors.transparent
-                : Colors.white.withOpacity(0.08),
+                : AppColors.divider,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? Colors.white : AppColors.textMuted,
+            color: selected
+                ? Theme.of(context).colorScheme.onPrimary
+                : AppColors.textMuted,
             fontSize: 13,
             fontWeight: FontWeight.w600,
             letterSpacing: 0,

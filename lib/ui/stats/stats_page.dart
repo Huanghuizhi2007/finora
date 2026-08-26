@@ -265,16 +265,17 @@ class _PeriodSelector extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
               decoration: BoxDecoration(
-                gradient: selected
-                    ? const LinearGradient(colors: AppColors.bluePurpleGradient)
-                    : null,
-                color: selected ? null : AppColors.surfaceAlt,
+                color: selected
+                    ? Theme.of(context).colorScheme.primary
+                    : AppColors.surfaceAlt,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Text(
                 item.$2,
                 style: TextStyle(
-                  color: selected ? Colors.white : AppColors.textMuted,
+                  color: selected
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : AppColors.textMuted,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0,
@@ -405,7 +406,7 @@ class _TrendChart extends StatelessWidget {
           show: true,
           drawVerticalLine: false,
           getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.white.withOpacity(0.06),
+            color: AppColors.divider,
             strokeWidth: 1,
           ),
         ),
@@ -455,18 +456,13 @@ class _TrendChart extends StatelessWidget {
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  AppColors.primaryBlue.withOpacity(0.32),
-                  AppColors.primaryBlue.withOpacity(0.01),
-                ],
-              ),
+              color: AppColors.primaryBlue.withValues(alpha: 0.08),
             ),
           ),
         ],
       ),
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOutCubic,
     );
   }
 }
@@ -501,6 +497,8 @@ class _CategoryPieChart extends StatelessWidget {
                 );
               }).toList(),
             ),
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutCubic,
           ),
         ),
         const SizedBox(height: 12),
@@ -557,14 +555,6 @@ class _MonthlyBarChart extends StatelessWidget {
               width: 12,
               borderRadius: BorderRadius.circular(6),
               color: AppColors.primaryPurple,
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  Color(0xFFA78BFA),
-                  Color(0xFF6D28D9),
-                ],
-              ),
             ),
           ],
         ),
@@ -578,7 +568,7 @@ class _MonthlyBarChart extends StatelessWidget {
           show: true,
           drawVerticalLine: false,
           getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.white.withOpacity(0.06),
+            color: AppColors.divider,
             strokeWidth: 1,
           ),
         ),
@@ -618,6 +608,8 @@ class _MonthlyBarChart extends StatelessWidget {
         ),
         barGroups: bars,
       ),
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOutCubic,
     );
   }
 }

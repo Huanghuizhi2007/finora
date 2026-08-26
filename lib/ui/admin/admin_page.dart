@@ -62,16 +62,14 @@ class AdminPage extends StatelessWidget {
                       width: 38,
                       height: 38,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: AppColors.bluePurpleGradient,
-                        ),
+                        color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: Text(
                           user.name.substring(0, 1),
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontWeight: FontWeight.w800,
                           ),
                         ),

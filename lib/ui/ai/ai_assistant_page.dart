@@ -140,7 +140,7 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
                     label: Text(suggestion),
                     onPressed: () => _send(suggestion),
                     backgroundColor: AppColors.surfaceAlt,
-                    side: BorderSide(color: Colors.white.withOpacity(0.08)),
+                    side: const BorderSide(color: AppColors.divider),
                     labelStyle: const TextStyle(
                       color: AppColors.textMuted,
                       fontSize: 13,
@@ -172,17 +172,15 @@ class _InsightHeader extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(20, 12, 20, 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: <Color>[Color(0xFF312E81), Color(0xFF1E3A8A)],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.divider),
       ),
       child: Row(
         children: <Widget>[
           const Icon(
             Icons.auto_awesome_rounded,
-            color: Color(0xFFA78BFA),
+            color: AppColors.primaryBlue,
             size: 30,
           ),
           const SizedBox(width: 12),
@@ -193,7 +191,7 @@ class _InsightHeader extends StatelessWidget {
                 const Text(
                   '本月概览',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0,
@@ -203,7 +201,7 @@ class _InsightHeader extends StatelessWidget {
                 Text(
                   '支出 ${MoneyFormat.compact(summary.expense)} · 结余 ${MoneyFormat.compact(summary.savings)}',
                   style: const TextStyle(
-                    color: Colors.white70,
+                    color: AppColors.textMuted,
                     fontSize: 12,
                     letterSpacing: 0,
                   ),
@@ -241,10 +239,9 @@ class _MessageBubble extends StatelessWidget {
           maxWidth: MediaQuery.of(context).size.width * 0.78,
         ),
         decoration: BoxDecoration(
-          gradient: isUser
-              ? const LinearGradient(colors: AppColors.bluePurpleGradient)
-              : null,
-          color: isUser ? null : AppColors.surfaceAlt,
+          color: isUser
+              ? Theme.of(context).colorScheme.primary
+              : AppColors.surfaceAlt,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
@@ -255,7 +252,9 @@ class _MessageBubble extends StatelessWidget {
         child: Text(
           message.text,
           style: TextStyle(
-            color: isUser ? Colors.white : AppColors.textPrimary,
+            color: isUser
+                ? Theme.of(context).colorScheme.onPrimary
+                : AppColors.textPrimary,
             fontSize: 14,
             height: 1.5,
             letterSpacing: 0,

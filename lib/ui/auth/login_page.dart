@@ -65,17 +65,8 @@ class _LoginPageState extends State<LoginPage> {
                     width: 52,
                     height: 52,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: AppColors.bluePurpleGradient,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                          color: AppColors.primaryBlue.withOpacity(0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: const Icon(
                       Icons.account_balance_wallet_rounded,

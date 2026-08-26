@@ -246,20 +246,14 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: selected
-                          ? LinearGradient(
-                              colors: <Color>[
-                                Color(category.colorValue).withOpacity(0.30),
-                                Color(category.colorValue).withOpacity(0.12),
-                              ],
-                            )
-                          : null,
-                      color: selected ? null : AppColors.surfaceAlt,
+                      color: selected
+                          ? Color(category.colorValue).withValues(alpha: 0.12)
+                          : AppColors.surfaceAlt,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: selected
-                            ? Color(category.colorValue).withOpacity(0.8)
-                            : Colors.white.withOpacity(0.06),
+                            ? Color(category.colorValue).withValues(alpha: 0.6)
+                            : AppColors.divider,
                       ),
                     ),
                     child: Column(
@@ -378,7 +372,7 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
                 decoration: BoxDecoration(
                   color: AppColors.surfaceAlt,
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  border: Border.all(color: AppColors.divider),
                 ),
                 child: _imagePath == null
                     ? const Column(

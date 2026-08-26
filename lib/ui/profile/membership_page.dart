@@ -15,8 +15,6 @@ class MembershipPage extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
         children: <Widget>[
           GlassCard(
-            gradient: const <Color>[Color(0xFF312E81), Color(0xFF0F172A)],
-            glow: true,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -29,7 +27,7 @@ class MembershipPage extends StatelessWidget {
                 const Text(
                   'Finora Pro',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0,
@@ -39,7 +37,7 @@ class MembershipPage extends StatelessWidget {
                 const Text(
                   '解锁高级统计、无限账户和 AI 财务分析',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: AppColors.textMuted,
                     fontSize: 13,
                     letterSpacing: 0,
                   ),
@@ -50,7 +48,7 @@ class MembershipPage extends StatelessWidget {
                     const Text(
                       '¥12',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 28,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0,
@@ -60,7 +58,7 @@ class MembershipPage extends StatelessWidget {
                     const Text(
                       '/ 月',
                       style: TextStyle(
-                        color: Colors.white60,
+                        color: AppColors.textMuted,
                         fontSize: 13,
                         letterSpacing: 0,
                       ),
@@ -72,13 +70,13 @@ class MembershipPage extends StatelessWidget {
                         vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.14),
+                        color: AppColors.surfaceAlt,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Text(
                         '可随时取消',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),

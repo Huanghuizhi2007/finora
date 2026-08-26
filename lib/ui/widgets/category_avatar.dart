@@ -21,26 +21,12 @@ class CategoryAvatar extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: <Color>[
-            color.withOpacity(0.9),
-            color.withOpacity(0.45),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(size * 0.34),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: color.withOpacity(0.28),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(size * 0.32),
       ),
       child: Icon(
         AppIcons.forKey(iconKey),
-        color: Colors.white,
+        color: color,
         size: size * 0.5,
       ),
     );

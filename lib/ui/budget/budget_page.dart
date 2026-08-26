@@ -154,8 +154,6 @@ class _TotalBudgetCard extends StatelessWidget {
             : AppColors.income;
 
     return GlassCard(
-      gradient: const <Color>[Color(0xFF1E3A8A), Color(0xFF3B0764)],
-      glow: true,
       onTap: () => BudgetPage()._showBudgetSheet(context, finance,
           budget: progress.budget),
       child: Column(
@@ -163,12 +161,12 @@ class _TotalBudgetCard extends StatelessWidget {
         children: <Widget>[
           const Row(
             children: <Widget>[
-              Icon(Icons.track_changes_rounded, color: Colors.white70, size: 18),
+              Icon(Icons.track_changes_rounded, color: AppColors.textMuted, size: 18),
               SizedBox(width: 8),
               Text(
                 '本月总预算',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: AppColors.textMuted,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0,
@@ -183,7 +181,7 @@ class _TotalBudgetCard extends StatelessWidget {
               Text(
                 MoneyFormat.format(progress.spent),
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: 30,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0,
@@ -193,7 +191,7 @@ class _TotalBudgetCard extends StatelessWidget {
               Text(
                 '/ ${MoneyFormat.format(progress.budget.amount)}',
                 style: const TextStyle(
-                  color: Colors.white60,
+                  color: AppColors.textMuted,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0,
@@ -217,7 +215,7 @@ class _TotalBudgetCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: percent / 100,
               minHeight: 8,
-              backgroundColor: Colors.white.withOpacity(0.12),
+              backgroundColor: AppColors.surfaceAlt,
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -227,7 +225,7 @@ class _TotalBudgetCard extends StatelessWidget {
                 ? '已超支 ${MoneyFormat.format(-progress.remaining)}'
                 : '还可使用 ${MoneyFormat.format(progress.remaining)}',
             style: const TextStyle(
-              color: Colors.white70,
+              color: AppColors.textMuted,
               fontSize: 12,
               letterSpacing: 0,
             ),
@@ -422,7 +420,7 @@ class _BudgetSheetState extends State<_BudgetSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.16),
+                  color: AppColors.divider,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

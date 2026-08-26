@@ -121,16 +121,8 @@ class _Header extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: AppColors.bluePurpleGradient,
-            ),
+            color: Theme.of(context).colorScheme.primary,
             shape: BoxShape.circle,
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: AppColors.primaryPurple.withOpacity(0.35),
-                blurRadius: 16,
-              ),
-            ],
           ),
           child: Center(
             child: Text(
@@ -196,11 +188,6 @@ class _BalanceCard extends StatelessWidget {
     final isPositive = change >= 0;
     return GlassCard(
       padding: const EdgeInsets.all(22),
-      gradient: const <Color>[
-        Color(0xFF1D4ED8),
-        Color(0xFF4C1D95),
-      ],
-      glow: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -208,14 +195,14 @@ class _BalanceCard extends StatelessWidget {
             children: <Widget>[
               Icon(
                 Icons.account_balance_wallet_rounded,
-                color: Colors.white70,
+                color: AppColors.textMuted,
                 size: 18,
               ),
               SizedBox(width: 8),
               Text(
                 '总资产',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: AppColors.textMuted,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0,
@@ -224,22 +211,28 @@ class _BalanceCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          Text(
-            MoneyFormat.format(totalBalance),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0,
-            ),
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: totalBalance),
+            duration: const Duration(milliseconds: 700),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, _) {
+              return Text(
+                MoneyFormat.format(value),
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 36,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.14),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.16)),
+              color: AppColors.surfaceAlt,
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -250,16 +243,16 @@ class _BalanceCard extends StatelessWidget {
                       : Icons.trending_down_rounded,
                   size: 16,
                   color: isPositive
-                      ? const Color(0xFF6EE7B7)
-                      : const Color(0xFFFCA5A5),
+                      ? AppColors.income
+                      : AppColors.expense,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '${isPositive ? '+' : ''}${change.toStringAsFixed(1)}% 较上月',
                   style: TextStyle(
                     color: isPositive
-                        ? const Color(0xFF6EE7B7)
-                        : const Color(0xFFFCA5A5),
+                        ? AppColors.income
+                        : AppColors.expense,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0,
@@ -438,16 +431,9 @@ class _ActionButton extends StatelessWidget {
               width: 46,
               height: 46,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    AppColors.primaryBlue.withOpacity(0.24),
-                    AppColors.primaryPurple.withOpacity(0.18),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.white.withOpacity(0.08)),
+                color: AppColors.surfaceAlt,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.divider),
               ),
               child: Icon(icon, color: AppColors.primaryBlue, size: 22),
             ),

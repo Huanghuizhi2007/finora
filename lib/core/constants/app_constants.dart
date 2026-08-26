@@ -3,26 +3,26 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const Color background = Color(0xFF080B12);
-  static const Color card = Color(0xFF111827);
-  static const Color surfaceAlt = Color(0xFF172033);
-  static const Color primaryBlue = Color(0xFF4F7CFF);
-  static const Color primaryPurple = Color(0xFF8B5CF6);
-  static const Color cyan = Color(0xFF22D3EE);
-  static const Color income = Color(0xFF34D399);
-  static const Color expense = Color(0xFFFB7185);
-  static const Color textPrimary = Color(0xFFF8FAFC);
-  static const Color textMuted = Color(0xFF94A3B8);
-  static const Color divider = Color(0xFF232C3D);
+  static const Color background = Color(0xFFF7F8FA);
+  static const Color card = Color(0xFFFFFFFF);
+  static const Color surfaceAlt = Color(0xFFF1F3F5);
+  static const Color primaryBlue = Color(0xFF2563EB);
+  static const Color primaryPurple = Color(0xFF2563EB);
+  static const Color cyan = Color(0xFF0891B2);
+  static const Color income = Color(0xFF16A34A);
+  static const Color expense = Color(0xFFDC2626);
+  static const Color textPrimary = Color(0xFF111827);
+  static const Color textMuted = Color(0xFF6B7280);
+  static const Color divider = Color(0xFFE5E7EB);
 
   static const List<Color> bluePurpleGradient = <Color>[
-    Color(0xFF3B82F6),
-    Color(0xFF8B5CF6),
+    Color(0xFF111827),
+    Color(0xFF111827),
   ];
 
   static const List<Color> deepGradient = <Color>[
-    Color(0xFF0F172A),
-    Color(0xFF111827),
+    Color(0xFFFFFFFF),
+    Color(0xFFF7F8FA),
   ];
 
   static const List<Color> accountGradients = <Color>[

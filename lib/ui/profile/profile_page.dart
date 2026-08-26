@@ -11,6 +11,7 @@ import '../admin/admin_page.dart';
 import '../ai/ai_assistant_page.dart';
 import '../budget/budget_page.dart';
 import '../import/import_page.dart';
+import '../widgets/glass_card.dart';
 import 'edit_profile_page.dart';
 import 'membership_page.dart';
 import 'notification_settings_page.dart';
@@ -199,15 +200,13 @@ class ProfilePage extends StatelessWidget {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: AppColors.bluePurpleGradient,
-                    ),
+                    color: AppColors.surfaceAlt,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Text(
                     '基础版',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                     ),
@@ -332,7 +331,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                     children: const <Widget>[
                       SizedBox(height: 12),
-                      Text('深色科技金融风个人财务管理应用。'),
+                      Text('简洁易用的个人财务管理应用。'),
                     ],
                   ),
                 ),
@@ -380,81 +379,63 @@ class _ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: <Color>[Color(0xFF172033), Color(0xFF0F172A)],
+    return GlassCard(
+      padding: const EdgeInsets.all(18),
+      radius: 18,
+      onTap: onTap,
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                nickname.isEmpty ? 'F' : nickname.substring(0, 1),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
           ),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.08)),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(24),
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Row(
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: AppColors.bluePurpleGradient,
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      nickname.isEmpty ? 'F' : nickname.substring(0, 1),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
+                Text(
+                  nickname,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0,
                   ),
                 ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        nickname,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        email,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 12,
-                          letterSpacing: 0,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 4),
+                Text(
+                  email,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textMuted,
+                    fontSize: 12,
+                    letterSpacing: 0,
                   ),
-                ),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  color: AppColors.textMuted,
                 ),
               ],
             ),
           ),
-        ),
+          const Icon(
+            Icons.chevron_right_rounded,
+            color: AppColors.textMuted,
+          ),
+        ],
       ),
     );
   }
@@ -486,7 +467,7 @@ class _MenuGroup extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.06)),
+        border: Border.all(color: AppColors.divider),
       ),
       child: Column(
         children: <Widget>[
