@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/config/app_config.dart';
 import '../../core/constants/app_constants.dart';
+import '../../data/update_service.dart';
 import '../../state/finance_controller.dart';
 import '../../state/session_controller.dart';
 import '../admin/admin_page.dart';
@@ -12,12 +14,29 @@ import '../ai/ai_assistant_page.dart';
 import '../budget/budget_page.dart';
 import '../import/import_page.dart';
 import '../widgets/glass_card.dart';
+import '../widgets/update_dialog.dart';
 import 'edit_profile_page.dart';
 import 'membership_page.dart';
 import 'notification_settings_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  Future<void> _checkUpdate(BuildContext context) async {
+    final update = await UpdateService.checkLatest();
+    if (!context.mounted) return;
+    if (update == null ||
+        !UpdateService.isNewer(update.version, AppConfig.appVersion)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('当前已是最新版本')),
+      );
+      return;
+    }
+    final download = await showUpdateDialog(context, update);
+    if (download == true) {
+      await openUpdate(context, update);
+    }
+  }
 
   Future<void> _changePassword(BuildContext context) async {
     final passwordController = TextEditingController();
@@ -334,6 +353,12 @@ class ProfilePage extends StatelessWidget {
                       Text('简洁易用的个人财务管理应用。'),
                     ],
                   ),
+                ),
+                _MenuItem(
+                  icon: Icons.system_update_alt_rounded,
+                  label: '检查更新',
+                  color: AppColors.primaryBlue,
+                  onTap: () => _checkUpdate(context),
                 ),
               ],
             ),

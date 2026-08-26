@@ -2,7 +2,7 @@ class AppConfig {
   AppConfig._();
 
   static const String appName = 'Finora';
-  static const String appVersion = '0.2.2';
+  static const String appVersion = '0.2.3';
 
   static const String supabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
