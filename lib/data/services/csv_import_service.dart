@@ -120,7 +120,11 @@ class CsvImportService {
           ? TransactionType.income
           : TransactionType.expense;
       final category = matchCategory(type, cell(productIndex), categories);
-      final account = matchAccount(cell(paymentIndex), accounts);
+      final account = matchAccount(
+        cell(paymentIndex),
+        accounts,
+        source: source,
+      );
       final product = cell(productIndex);
       final merchant = cell(merchantIndex);
       final note = product.isNotEmpty
@@ -206,6 +210,7 @@ class CsvImportService {
   static FinanceAccount matchAccount(
     String payment,
     List<FinanceAccount> accounts,
+    {ImportSource? source}
   ) {
     if (accounts.isEmpty) {
       throw Exception('请先创建至少一个账户');
@@ -216,6 +221,16 @@ class CsvImportService {
       }
     }
     if (payment.contains('支付宝')) {
+      for (final account in accounts) {
+        if (account.type == AccountType.alipay) return account;
+      }
+    }
+    if (source == ImportSource.wechat) {
+      for (final account in accounts) {
+        if (account.type == AccountType.wechat) return account;
+      }
+    }
+    if (source == ImportSource.alipay) {
       for (final account in accounts) {
         if (account.type == AccountType.alipay) return account;
       }

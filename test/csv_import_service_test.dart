@@ -57,4 +57,41 @@ void main() {
     expect(result.records.first.accountId, 'a1');
     expect(result.records.last.type, TransactionType.income);
   });
+
+  test('Alipay CSV defaults to Alipay account', () {
+    const alipayContent = '''
+支付宝交易记录明细查询
+交易时间,交易分类,交易对方,对方账号,商品说明,收/支,金额,收/付款方式,交易状态,交易订单号,商家订单号,备注,
+2026-08-25 12:00:00,商业服务,某公司,/,API服务,支出,9.92,账户余额,交易成功,20260825001,10001,
+''';
+    final bothAccounts = <FinanceAccount>[
+      const FinanceAccount(
+        id: 'wechat',
+        userId: 'u1',
+        name: '微信支付',
+        type: AccountType.wechat,
+        balance: 0,
+        iconKey: 'wechat',
+        colorValue: 0xFF2563EB,
+      ),
+      const FinanceAccount(
+        id: 'alipay',
+        userId: 'u1',
+        name: '支付宝',
+        type: AccountType.alipay,
+        balance: 0,
+        iconKey: 'alipay',
+        colorValue: 0xFF7C3AED,
+      ),
+    ];
+
+    final result = CsvImportService.parse(
+      content: alipayContent,
+      userId: 'u1',
+      accounts: bothAccounts,
+      categories: categories,
+    );
+    expect(result.source, ImportSource.alipay);
+    expect(result.records.first.accountId, 'alipay');
+  });
 }
