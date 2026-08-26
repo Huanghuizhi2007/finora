@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/utils/money_formatter.dart';
 import '../../data/services/csv_import_service.dart';
+import '../../data/services/excel_import_service.dart';
 import '../../domain/entities/enums.dart';
 import '../../state/finance_controller.dart';
 import '../widgets/glass_card.dart';
@@ -35,21 +36,33 @@ class _ImportPageState extends State<ImportPage> {
     try {
       final picked = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: <String>['csv'],
+        allowedExtensions: <String>['csv', 'xlsx', 'xls'],
       );
       if (picked == null || picked.files.isEmpty) return;
       final file = picked.files.first;
       if (file.path == null) {
         throw Exception('无法读取该文件');
       }
-      final content = await File(file.path!).readAsString();
       final finance = context.read<FinanceController>();
-      final result = CsvImportService.parse(
-        content: content,
-        userId: finance.userId ?? '',
-        accounts: finance.accounts,
-        categories: finance.categories,
-      );
+      final userId = finance.userId ?? '';
+      final lowerName = file.name.toLowerCase();
+      final ParsedImport result;
+      if (lowerName.endsWith('.csv')) {
+        final content = await File(file.path!).readAsString();
+        result = CsvImportService.parse(
+          content: content,
+          userId: userId,
+          accounts: finance.accounts,
+          categories: finance.categories,
+        );
+      } else {
+        result = await ExcelImportService.parse(
+          filePath: file.path!,
+          userId: userId,
+          accounts: finance.accounts,
+          categories: finance.categories,
+        );
+      }
       setState(() {
         _result = result;
         _fileName = file.name;
@@ -92,7 +105,7 @@ class _ImportPageState extends State<ImportPage> {
                         color: AppColors.primaryBlue, size: 24),
                     SizedBox(width: 10),
                     Text(
-                      '微信 / 支付宝 CSV 账单',
+                      '微信 / 支付宝 CSV / Excel 账单',
                       style: TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 16,
@@ -104,7 +117,7 @@ class _ImportPageState extends State<ImportPage> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  '支持微信支付和支付宝导出的 CSV 文件，自动识别交易时间、金额、收支方向和支付方式。',
+                  '支持微信支付和支付宝导出的 CSV / Excel 文件，自动识别交易时间、金额、收支方向和支付方式。',
                   style: TextStyle(
                     color: AppColors.textMuted,
                     fontSize: 13,
@@ -125,7 +138,7 @@ class _ImportPageState extends State<ImportPage> {
                   )
                 else
                   GradientButton(
-                    label: result == null ? '选择 CSV 文件' : '重新选择文件',
+                    label: result == null ? '选择账单文件' : '重新选择文件',
                     icon: Icons.folder_open_rounded,
                     onPressed: _pickFile,
                   ),

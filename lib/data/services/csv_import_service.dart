@@ -32,6 +32,22 @@ class CsvImportService {
       eol: '\n',
       shouldParseNumbers: false,
     ).convert(normalized);
+    return parseRows(
+      rows: rows,
+      userId: userId,
+      accounts: accounts,
+      categories: categories,
+      rawText: normalized,
+    );
+  }
+
+  static ParsedImport parseRows({
+    required List<List<dynamic>> rows,
+    required String userId,
+    required List<FinanceAccount> accounts,
+    required List<Category> categories,
+    String? rawText,
+  }) {
     if (rows.isEmpty) {
       throw Exception('文件内容为空');
     }
@@ -68,7 +84,8 @@ class CsvImportService {
     final orderIndex = column('交易单号') == -1
         ? column('交易订单号')
         : column('交易单号');
-    final isWechat = content.contains('微信支付');
+    final isWechat = (rawText ?? rows.map((r) => r.join('|')).join('|'))
+        .contains('微信支付');
     final source = isWechat ? ImportSource.wechat : ImportSource.alipay;
 
     final records = <TransactionRecord>[];
