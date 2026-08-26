@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:convert';
 
+import 'package:fast_gbk/fast_gbk.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -48,7 +50,13 @@ class _ImportPageState extends State<ImportPage> {
       final lowerName = file.name.toLowerCase();
       final ParsedImport result;
       if (lowerName.endsWith('.csv')) {
-        final content = await File(file.path!).readAsString();
+        final bytes = await File(file.path!).readAsBytes();
+        String content;
+        try {
+          content = utf8.decode(bytes);
+        } on FormatException {
+          content = gbk.decode(bytes);
+        }
         result = CsvImportService.parse(
           content: content,
           userId: userId,
