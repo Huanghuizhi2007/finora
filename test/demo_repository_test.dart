@@ -2,9 +2,11 @@ import 'package:finora/data/repositories/demo/demo_finance_repository.dart';
 import 'package:finora/domain/entities/enums.dart';
 import 'package:finora/domain/entities/transaction_record.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   test('demo finance data is isolated per user', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
     final repository = DemoFinanceRepository();
 
     final firstAccounts = await repository.fetchAccounts('demo-a@example.com');
@@ -31,5 +33,10 @@ void main() {
 
     expect(firstTransactions, hasLength(1));
     expect(secondTransactions, isEmpty);
+
+    final newRepository = DemoFinanceRepository();
+    final restored =
+        await newRepository.fetchTransactions('demo-a@example.com');
+    expect(restored, hasLength(1));
   });
 }
