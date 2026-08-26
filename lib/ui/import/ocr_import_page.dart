@@ -9,7 +9,6 @@ import '../../core/constants/app_constants.dart';
 import '../../core/utils/date_utils.dart';
 import '../../core/utils/money_formatter.dart';
 import '../../data/services/csv_import_service.dart';
-import '../../data/services/ocr_import_service.dart';
 import '../../data/services/pasted_bill_parser.dart';
 import '../../domain/entities/enums.dart';
 import '../../domain/entities/transaction_record.dart';
@@ -42,13 +41,12 @@ class _OcrImportPageState extends State<OcrImportPage> {
     try {
       final file = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (file == null) return;
-      final text = await OcrImportService.recognize(file.path);
       if (!mounted) return;
       setState(() {
         _imagePath = file.path;
-        _recognizedText = text;
-        _parsed = PastedBillParser.parse(text);
-        _error = _parsed == null ? '没有识别到金额或时间，可以手动补记' : null;
+        _recognizedText = null;
+        _parsed = null;
+        _error = '当前设备暂不支持自动识别，请选择手动补记并填写金额';
       });
     } catch (error) {
       if (!mounted) return;

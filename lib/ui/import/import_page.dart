@@ -196,7 +196,7 @@ class _ImportPageState extends State<ImportPage> {
                     ),
                     SizedBox(width: 10),
                     Text(
-                      '截图识别',
+                      '截图导入',
                       style: TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 16,
@@ -208,7 +208,7 @@ class _ImportPageState extends State<ImportPage> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  '选择微信/支付宝支付截图，自动识别金额、商户和时间。',
+                  '选择微信/支付宝支付截图，自动带入账单并附上图片，补充金额后保存。',
                   style: TextStyle(
                     color: AppColors.textMuted,
                     fontSize: 13,
