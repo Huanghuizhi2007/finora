@@ -30,6 +30,14 @@ void main() {
       isSystem: true,
     ),
     const Category(
+      id: 'utility',
+      type: TransactionType.expense,
+      name: '水电',
+      iconKey: 'bolt',
+      colorValue: 0xFFFBBF24,
+      isSystem: true,
+    ),
+    const Category(
       id: 'living',
       type: TransactionType.income,
       name: '生活费',
@@ -79,5 +87,41 @@ void main() {
       categories,
     );
     expect(category.name, '生活费');
+  });
+
+  test('maps network and laundry to utility', () {
+    final network = CsvImportService.matchCategory(
+      TransactionType.expense,
+      '网费充值',
+      categories,
+    );
+    final laundry = CsvImportService.matchCategory(
+      TransactionType.expense,
+      '洗衣房消费',
+      categories,
+    );
+    expect(network.name, '水电');
+    expect(laundry.name, '水电');
+  });
+
+  test('maps vending machines to food and merchant orders to shopping', () {
+    final vending = CsvImportService.matchCategory(
+      TransactionType.expense,
+      '无人售货柜_饮料 商户单号',
+      categories,
+    );
+    final smart = CsvImportService.matchCategory(
+      TransactionType.expense,
+      '智能货柜消费 商户单号',
+      categories,
+    );
+    final merchant = CsvImportService.matchCategory(
+      TransactionType.expense,
+      '某商品 商户单号',
+      categories,
+    );
+    expect(vending.name, '餐饮');
+    expect(smart.name, '餐饮');
+    expect(merchant.name, '购物');
   });
 }

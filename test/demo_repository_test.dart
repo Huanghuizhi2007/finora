@@ -39,4 +39,41 @@ void main() {
         await newRepository.fetchTransactions('demo-a@example.com');
     expect(restored, hasLength(1));
   });
+
+  test('laundry refund offsets previous laundry expense', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final repository = DemoFinanceRepository();
+
+    await repository.saveTransaction(
+      TransactionRecord(
+        id: 'laundry-exp',
+        userId: 'demo-c@example.com',
+        type: TransactionType.expense,
+        amount: 20,
+        categoryId: 'cat-exp-水电',
+        accountId: 'acc-alipay',
+        happenedAt: DateTime(2026, 8, 25, 10),
+        note: '洗衣房消费',
+      ),
+    );
+    await repository.saveTransaction(
+      TransactionRecord(
+        id: 'laundry-refund',
+        userId: 'demo-c@example.com',
+        type: TransactionType.income,
+        amount: 8,
+        categoryId: 'cat-inc-其他',
+        accountId: 'acc-alipay',
+        happenedAt: DateTime(2026, 8, 26, 10),
+        note: '洗衣房退款',
+      ),
+    );
+
+    final restarted = DemoFinanceRepository();
+    final transactions =
+        await restarted.fetchTransactions('demo-c@example.com');
+    expect(transactions, hasLength(1));
+    expect(transactions.first.type, TransactionType.expense);
+    expect(transactions.first.amount, 12);
+  });
 }

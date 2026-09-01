@@ -25,9 +25,49 @@ class DemoFinanceRepository implements FinanceRepository {
           categories: _seedCategories(userId),
         );
     final changed = _applyDefaults(userId, data);
-    if (changed) await _persist(userId);
+    final cleaned = _applyRefundOffset(data);
+    if (changed || cleaned) await _persist(userId);
     _dataByUser[userId] = data;
     return data;
+  }
+
+  bool _applyRefundOffset(_UserFinanceData data) {
+    var changed = false;
+    final refunds = data.transactions
+        .where(
+          (t) => t.type == TransactionType.income && t.note.contains('洗衣'),
+        )
+        .toList();
+    for (final refund in refunds) {
+      var remaining = refund.amount;
+      while (remaining > 0.01) {
+        final candidates = data.transactions
+            .where(
+              (t) =>
+                  t.type == TransactionType.expense &&
+                  t.note.contains('洗衣') &&
+                  t.amount > 0,
+            )
+            .toList()
+          ..sort((a, b) => a.amount.compareTo(b.amount));
+        if (candidates.isEmpty) break;
+        final expense = candidates.first;
+        final offset = remaining < expense.amount ? remaining : expense.amount;
+        remaining -= offset;
+        final newAmount = expense.amount - offset;
+        final index = data.transactions.indexWhere((t) => t.id == expense.id);
+        if (index < 0) continue;
+        if (newAmount <= 0.01) {
+          data.transactions.removeAt(index);
+        } else {
+          data.transactions[index] = expense.copyWith(amount: newAmount);
+        }
+        changed = true;
+      }
+      data.transactions.removeWhere((t) => t.id == refund.id);
+      changed = true;
+    }
+    return changed;
   }
 
   bool _applyDefaults(String userId, _UserFinanceData data) {
@@ -358,6 +398,7 @@ class DemoFinanceRepository implements FinanceRepository {
       imported++;
     }
     data.transactions.sort((a, b) => b.happenedAt.compareTo(a.happenedAt));
+    _applyRefundOffset(data);
     await _persist(userId);
     return imported;
   }

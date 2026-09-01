@@ -119,7 +119,6 @@ class CsvImportService {
       final type = direction == '收入'
           ? TransactionType.income
           : TransactionType.expense;
-      final category = matchCategory(type, cell(productIndex), categories);
       final account = matchAccount(
         cell(paymentIndex),
         accounts,
@@ -133,6 +132,9 @@ class CsvImportService {
               ? merchant
               : '账单导入';
       final order = cell(orderIndex);
+      final matchText = '$product $merchant '
+          '${order.isNotEmpty ? '商户单号' : ''}';
+      final category = matchCategory(type, matchText, categories);
 
       records.add(
         TransactionRecord(
@@ -178,13 +180,13 @@ class CsvImportService {
       throw Exception('缺少默认分类，请先初始化分类数据');
     }
     const keywordMap = <String, String>{
-      '餐饮': '餐|饭|早|午|晚|外卖|咖啡|奶茶|火锅|烧烤|售货柜|一卡通|食堂|餐厅',
-      '购物': '购|超市|淘宝|京东|商城|拼多多|商场|百货|小夜灯|收纳|衣架|洗衣|袜子|灯|袋|架|套|鞋|裤|杯|盒|器|笔|配件|置物',
+      '餐饮': '餐|饭|早|午|晚|外卖|咖啡|奶茶|火锅|烧烤|售货柜|无人售货|智能货柜|自助售货|一卡通|食堂|餐厅',
+      '水电': '网费|网络费|上网|洗衣房|洗衣店|干洗|电费|水费|燃气|供暖|话费|流量|宽带',
+      '学习': 'deepseek|api|gpt|大模型|人工智能|ai|课程|培训|图书|书店|学费|考试|知识',
+      '购物': '购|超市|淘宝|京东|商城|拼多多|商场|百货|商户单号|商家订单号|小夜灯|收纳|衣架|洗衣袋|袜子|灯|袋|架|套|鞋|裤|杯|盒|器|笔|配件|置物',
       '交通': '地铁|公交|打车|滴滴|加油|高铁|火车|机票|停车|单车',
       '娱乐': '电影|KTV|游戏|演出|乐园|会员|视频',
       '住房': '房租|租金|房贷|物业|装修|家具',
-      '水电': '电费|水费|燃气|供暖|话费|流量|宽带',
-      '学习': 'deepseek|api|gpt|大模型|人工智能|ai|课程|培训|图书|书店|学费|考试|知识',
       '医疗': '医院|药|诊所|体检|挂号',
       '旅行': '酒店|旅行|景区|门票|民宿',
       '工资': '工资|薪水|薪资|发放',
