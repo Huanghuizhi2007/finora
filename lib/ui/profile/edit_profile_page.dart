@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -8,6 +11,7 @@ import '../../core/constants/app_constants.dart';
 import '../../data/supabase_service.dart';
 import '../../state/session_controller.dart';
 import '../widgets/gradient_button.dart';
+import '../widgets/user_avatar.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -56,7 +60,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       uploaded =
           SupabaseService.client.storage.from('avatars').getPublicUrl(path);
     } else {
-      uploaded = file.path;
+      final directory = await getApplicationDocumentsDirectory();
+      final savedFile = File(
+        '${directory.path}/avatar_${userId}_'
+        '${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+      await savedFile.writeAsBytes(await file.readAsBytes());
+      uploaded = savedFile.path;
     }
     setState(() => _avatarUrl = uploaded);
   }
@@ -93,27 +103,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
               child: Stack(
                 children: <Widget>[
                   Container(
-                    width: 96,
-                    height: 96,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: Theme.of(context).colorScheme.outlineVariant,
                         width: 2,
                       ),
                     ),
-                    child: Center(
-                      child: Text(
-                        _nicknameController.text.isEmpty
-                            ? 'F'
-                            : _nicknameController.text.substring(0, 1),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 34,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
+                    child: UserAvatar(
+                      nickname: _nicknameController.text,
+                      avatarUrl: _avatarUrl,
+                      size: 96,
+                      fontSize: 34,
                     ),
                   ),
                   Positioned(

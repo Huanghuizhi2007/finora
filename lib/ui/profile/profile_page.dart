@@ -14,6 +14,7 @@ import '../ai/ai_assistant_page.dart';
 import '../budget/budget_page.dart';
 import '../import/import_page.dart';
 import '../widgets/glass_card.dart';
+import '../widgets/user_avatar.dart';
 import '../widgets/update_dialog.dart';
 import 'edit_profile_page.dart';
 import 'membership_page.dart';
@@ -410,23 +411,11 @@ class _ProfileCard extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: <Widget>[
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                nickname.isEmpty ? 'F' : nickname.substring(0, 1),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
+          UserAvatar(
+            nickname: nickname,
+            avatarUrl: avatarUrl,
+            size: 56,
+            fontSize: 24,
           ),
           const SizedBox(width: 14),
           Expanded(

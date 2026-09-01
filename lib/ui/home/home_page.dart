@@ -16,6 +16,7 @@ import '../widgets/glass_card.dart';
 import '../widgets/loading_view.dart';
 import '../widgets/section_header.dart';
 import '../widgets/transaction_tile.dart';
+import '../widgets/user_avatar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -43,7 +44,10 @@ class HomePage extends StatelessWidget {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
             sliver: SliverToBoxAdapter(
-              child: _Header(user?.nickname ?? '用户'),
+              child: _Header(
+                user?.nickname ?? '用户',
+                user?.avatarUrl,
+              ),
             ),
           ),
           SliverPadding(
@@ -108,32 +112,21 @@ class HomePage extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header(this.nickname);
+  const _Header(this.nickname, this.avatarUrl);
 
   final String nickname;
+  final String? avatarUrl;
 
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
     return Row(
       children: <Widget>[
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Text(
-              nickname.isEmpty ? 'F' : nickname.substring(0, 1),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
+        UserAvatar(
+          nickname: nickname,
+          avatarUrl: avatarUrl,
+          size: 48,
+          fontSize: 20,
         ),
         const SizedBox(width: 14),
         Expanded(
